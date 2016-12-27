@@ -3891,6 +3891,7 @@
     <Content Include="node_modules\zone.js\dist\zone.js" />
     <Content Include="node_modules\zone.js\dist\zone.min.js" />
     <Content Include="Scripts\Account\account.component.html" />
+    <Content Include="Scripts\Account\personcomponent.html" />
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
@@ -9056,12 +9057,14 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Filter\PermissionCheckAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\Common.cs" />
+    <Compile Include="Models\Person.cs" />
     <Compile Include="Models\SessionData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -9913,6 +9916,10 @@
     <Content Include="vendors\validator\.bower.json" />
     <Content Include="vendors\validator\README.md" />
     <Content Include="vendors\validator\validator.jquery.json" />
+    <Content Include="Views\Account\AccountManager.cshtml" />
+    <Content Include="Views\Account\Create.cshtml" />
+    <Content Include="Views\Account\Edit.cshtml" />
+    <Content Include="Views\Account\Delete.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -11471,6 +11478,10 @@
     <TypeScriptCompile Include="Scripts\Account\account.component.ts" />
     <TypeScriptCompile Include="Scripts\Account\account.module.ts" />
     <TypeScriptCompile Include="Scripts\Account\main.ts" />
+    <TypeScriptCompile Include="Scripts\Account\personController.ts" />
+    <TypeScriptCompile Include="Scripts\Account\personFactory.ts" />
+    <TypeScriptCompile Include="Scripts\Account\sampleApp.ts" />
+    <TypeScriptCompile Include="Scripts\Account\User.ts" />
     <TypeScriptCompile Include="Scripts\App\app.component.ts" />
     <TypeScriptCompile Include="Scripts\App\app.module.ts" />
     <TypeScriptCompile Include="Scripts\App\hans.component.ts" />

@@ -1,0 +1,124 @@
+﻿
+@{
+    ViewBag.Title = "AccountManager";
+}
+@using TicketSystem.DbLib.Entities
+@model ompticketsystemwebsite.Models.AccountView
+
+<link href="~/Content/Page.css" rel="stylesheet">
+<script>
+    function Confirm_Form()
+    {
+        if (!confirm("是否確認刪除此筆資料?"))
+            return false;
+    }
+
+</script>
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>使用者 <small>Table List</small></h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    @Html.ActionLink("新增資料", "Create")
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="x_content">
+            <form method="post" id="AccList" action="@Url.Action("AccountManager")">
+                <div class="table-responsive">
+                    <table class="table table-striped jambo_table bulk_action">
+                        <thead>
+                            <tr class="headings">
+                                @*<th>
+                                        <input type="checkbox" id="check-all" class="flat">
+                                    </th>*@
+                                <th class="column-title">帳號 </th>
+                                <th class="column-title">姓名 </th>
+                                <th class="column-title">狀態 </th>
+                                <th class="column-title">部門 </th>
+                                <th class="column-title">職稱 </th>
+                                <th class="column-title">建立者 </th>
+                                <th class="column-title">建立日期 </th>
+                                <th class="column-title no-link last">
+                                    <span class="nobr">Action</span>
+                                </th>
+                                <th class="bulk-actions" colspan="7">
+                                    <a class="antoo" style="color:#fff; font-weight:500;">Bulk Actions ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model.TicketUserList)
+                            {
+
+                                <tr class="even pointer">
+                                    @*<td class="a-center ">
+                                            <input type="checkbox" class="flat" name="table_records">
+                                        </td>*@
+                                    <td class=" ">@item.Userid</td>
+                                    <td class=" ">@item.Username</td>
+                                    <td class=" ">@item.Status</td>
+                                    <td class=" ">@item.Department</td>
+                                    <td class=" ">@item.Title</td>
+                                    <td class=" ">@item.Creator </td>
+                                    <td class=" ">@item.Createtime</td>
+                                    <td class=" last">
+                                        @Html.ActionLink("修改", "Edit", new { id = item.Userid }) |
+                                        @Html.ActionLink("刪除", "Deleteitem", new { id = item.Userid }, new { @onclick = "return Confirm_Form()" })
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="pager">
+                        @*@Html.Pager(Model.ApiLogSearchList.PageSize, Model.ApiLogSearchList.PageNumber, Model.ApiLogSearchList.TotalItemCount).Options(o => o.AddRouteValue("Category", Model.Category).AddRouteValue("Transactionid", Model.Transactionid))*@
+                        @Html.Pager(Model.TicketUserList.PageSize, Model.TicketUserList.PageNumber, Model.TicketUserList.TotalItemCount)
+                        Displaying @Model.TicketUserList.ItemStart - @Model.TicketUserList.ItemEnd of @Model.TicketUserList.TotalItemCount item(s)
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section scripts {
+
+    <script>
+
+    $(function () {
+
+        // Fields
+        var _pageLinkers = $(".pager> a");
+
+        // Binding click event
+        _pageLinkers.each(function (i, item) {
+            var page = getParameterByName($(item).attr('href'), 'page')
+            $(item).attr('href', '#').click(function () { postPage(page); });
+        });
+
+    });
+
+
+    function postPage(page) {
+        var targetFormID = '#AccList';
+        if ($(targetFormID).size() > 0) {
+            $('<input>')
+                .attr({ type: 'hidden', id: 'page', name: 'page', value: page })
+                .appendTo($(targetFormID));
+            $(targetFormID).submit();
+        }
+    };
+
+    function getParameterByName(url,name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(url);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    </script>
+
+}

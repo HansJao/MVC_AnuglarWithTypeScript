@@ -1,0 +1,51 @@
+﻿@model TicketSystem.DbLib.Entities.TicketUser
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>確定要刪除此筆資料嗎?</h3>
+
+<div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Userid)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Userid)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Username)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Username)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Status)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Status)
+            </dd>
+
+        </dl>
+            <div class="form-actions no-color">
+                <input type="submit" value="確定刪除" class="btn btn-default" /> |
+            </div>
+    }
+
+    <div>
+        @Html.ActionLink("回列表", "AccountManager")
+    </div>
+</div>

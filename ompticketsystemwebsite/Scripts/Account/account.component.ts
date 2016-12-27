@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import {Http,Response} from '@angular/http';
+import {Http,Response,Headers} from '@angular/http';
 
 @Component({
     selector: 'accountLogin',
@@ -11,10 +11,14 @@ export class AccountComponent implements OnInit {
 
     constructor(private _http: Http) {
         this.temp = "Welcome";
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        var test;
+        _http.post('/Account/GetPeople', '{"test": "123" }', headers).subscribe(data=> test=data);
     }
 
     ngOnInit() {
-        console.log("hello")
+        console.log("hello");
+        
     }
 
     btnClickedEvent(): void {
@@ -22,4 +26,6 @@ export class AccountComponent implements OnInit {
     }
 
 }
+
+
 

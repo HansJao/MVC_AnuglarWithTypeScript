@@ -10,6 +10,8 @@
 <script src="../../node_modules/reflect-metadata/Reflect.js"></script>
 <script src="../../node_modules/systemjs/dist/system.src.js"></script>
 <script src="../../systemjs.config.js"></script>
+<script src="~/Scripts/angular.js"></script>
+
     <!-- Bootstrap -->
 <link href="~/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- Font Awesome -->
@@ -29,6 +31,17 @@
             console.error(err);
         });
 </script>
-<script src="~/Scripts/angular.js"></script>
-
+<script src="~/Scripts/Account/sampleApp.js"></script>
+<script src="~/Scripts/Account/personFactory.js"></script>
+<script src="~/Scripts/Account/personController.js"></script>
+<body ng-app="PersonsApp">
+    <div ng-controller="personController">
+        <ul>
+            <li ng-repeat="person in people">
+                <h2>{{person.FirstName}} {{person.LastName}}</h2>
+            </li>
+        </ul>
+    </div>
+@*<person-component></person-component>*@
 <accountLogin></accountLogin>
+</body>

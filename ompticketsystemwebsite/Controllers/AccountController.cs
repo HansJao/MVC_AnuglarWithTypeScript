@@ -2,6 +2,7 @@
 using ompticketsystemwebsite.Filter;
 using ompticketsystemwebsite.Models;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -20,6 +21,19 @@ namespace ompticketsystemwebsite.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        //[Route("/peopletest")]
+        public JsonResult GetPeople(string test)
+        {
+            var people = new List<Person>()
+            {
+                new Person { Id = 1, FirstName = "John", LastName = test },
+                new Person { Id = 1, FirstName = "Mary", LastName = "Jane" },
+                new Person { Id = 1, FirstName = "Bob", LastName = "Parker" }
+            };
+
+            return Json(people);
         }
 
         [HttpPost]

@@ -14,6 +14,9 @@ var AccountComponent = (function () {
     function AccountComponent(_http) {
         this._http = _http;
         this.temp = "Welcome";
+        var headers = new http_1.Headers({ 'Content-Type': 'application/json' });
+        var test;
+        _http.post('/Account/GetPeople', '{"test": "123" }', headers).subscribe(function (data) { return test = data; });
     }
     AccountComponent.prototype.ngOnInit = function () {
         console.log("hello");
