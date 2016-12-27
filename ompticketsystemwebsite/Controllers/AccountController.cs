@@ -1,24 +1,169 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MvcPaging;
+using ompticketsystemwebsite.Filter;
+using ompticketsystemwebsite.Models;
+using System;
+using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
+using System.Net;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
+using TicketSystem.DbLib.Entities;
 
 namespace ompticketsystemwebsite.Controllers
 {
     public class AccountController : Controller
     {
+        private Account Acc = new Account();
+        private int PageSize = int.Parse(ConfigurationManager.AppSettings["PageSize"]);
         // GET: Account
         public ActionResult Index()
         {
             return View();
         }
 
+        [HttpPost]
+        /// <summary>
+        /// 驗證登入
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public ActionResult Login(string username, string password, string captch)
+        {
+
+            if (captch != null && captch.ToUpper().Equals(Session["ValidateCode"].ToString().ToUpper()))
+            {
+                SessionData LoginSession = Acc.IsLogin(username, password);
+                if (LoginSession.IsLogin == true)
+                //成功導頁
+                {
+                    Session["LoginData"] = LoginSession;
+                    ViewBag.Username = LoginSession.UserInfo.Username;
+                    //改用 HttpContext--
+                    HttpContext.Session.Add("LoginData", LoginSession);
+                    return RedirectToAction("Index", "Home");
+
+                }
+
+                TempData["Msg"] = "輸入帳號密碼不正確";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["Msg"] = "輸入驗證碼不正確";
+                return RedirectToAction("Index");
+            }
+        }
+
+        public ActionResult Logout()
+        {
+            //清資料 
+            Session["LoginData"] = null;
+
+            return RedirectToAction("Index");
+        }
+
+        [PermissionCheck]
+        public ActionResult AccountManager()
+        {
+            //取得資料
+            AccountView viewModel = new AccountView();
+            viewModel.TicketUserList = Acc.GetTicketUserList().ToPagedList(viewModel.Page > 0 ? viewModel.Page - 1 : 0, PageSize);
+            return View(viewModel);
+        }
+        [HttpPost]
+        [PermissionCheck]
+        public ActionResult AccountManager(AccountView viewModel)
+        {
+            //取得資料
+            viewModel.TicketUserList = Acc.GetTicketUserList().ToPagedList(viewModel.Page > 0 ? viewModel.Page - 1 : 0, PageSize);
+            return View(viewModel);
+        }
+
+        [PermissionCheck]
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 新增使用者
+        /// </summary>
+        /// <param name="userdata"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Create(TicketUser Accdata)
+        {
+            //1.建立者 寫DB                
+            SessionData SessionAcc = (SessionData)HttpContext.Session["LoginData"];
+            Accdata.Creator = SessionAcc.UserInfo.Userid;
+
+
+            bool resault = Acc.InsertUserdata(Accdata);
+            //2.導回List頁
+            if (resault) { return RedirectToAction("AccountManager"); }
+
+            TempData["Msg"] = "輸入帳號資料重複";
+            return View(Accdata);
+        }
+
+        [PermissionCheck]
+        public ActionResult Edit(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            TicketUser Userdata = Acc.GetTicketUser(id);
+            return View(Userdata);
+        }
+        /// <summary>
+        /// 使用者資料更新
+        /// </summary>
+        /// <param name="Userdata"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Edit(TicketUser Userdata)
+        {
+            bool resulat = Acc.UPDateUserdata(Userdata);
+            if (resulat) return RedirectToAction("AccountManager");
+
+            TempData["Msg"] = "資料更新失敗";
+            return View(Userdata);
+        }
+        [PermissionCheck]
+        public ActionResult Delete(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            TicketUser Userdata = Acc.GetTicketUser(id);
+            if (Userdata == null)
+            {
+                return HttpNotFound();
+            }
+            TempData["Msg"] = "資料異常，刪除失敗";
+            return View(Userdata);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public ActionResult DeleteConfirmed(string id)
+        {
+            Acc.DeleteUser(id);
+            return RedirectToAction("AccountManager");
+
+        }
+        public ActionResult Deleteitem(string id)
+        {
+            Acc.DeleteUser(id);
+            return RedirectToAction("AccountManager");
+
+        }
+
         #region  產生驗證碼
-        public string VerificationCode()
+        public void VerificationCode()
         {
             // 是否產生驗證碼
             bool isCreate = true;
@@ -102,7 +247,6 @@ namespace ompticketsystemwebsite.Controllers
             basemap.Save(Response.OutputStream, ImageFormat.Gif);
             // 將產生字串儲存至 Sesssion
             Session["ValidateCode"] = sb.ToString();
-            return sb.ToString();
             Response.End();
         }
         #endregion
